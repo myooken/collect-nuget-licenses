@@ -71,7 +71,7 @@ nuget-notices --fail-on-missing
 ### Programmatic API
 
 ```js
-import { run } from "@myooken/collect-nuget-licenses/src/cli.js";
+import { run } from "@myooken/collect-nuget-licenses";
 
 await run([
   "--root",
@@ -84,7 +84,7 @@ await run([
 ]);
 ```
 
-The function mirrors the CLI flags and is considered an internal entrypoint.
+The function mirrors the CLI flags and is exported from the package root as the public entrypoint.
 Outputs are sorted by package key. Use `--update` to merge with existing files and keep packages that are no longer present, with their status shown in both outputs.
 
 ### Output overview
