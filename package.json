@@ -1,11 +1,29 @@
 {
   "name": "@myooken/collect-nuget-licenses",
   "version": "0.1.0",
+  "description": "Generate third-party-license markdown by scanning nuget.",
   "license": "MIT",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/myooken/collect-nuget-licenses.git"
+  },
+  "homepage": "https://github.com/myooken/collect-nuget-licenses#readme",
+  "bugs": {
+    "url": "https://github.com/myooken/collect-nuget-licenses/issues"
+  },
   "bin": {
     "nuget-notices": "./bin/nuget-notices.js"
   },
+  "keywords": [
+    "license",
+    "third-party",
+    "notices",
+    "nuget",
+    "oss",
+    "compliance",
+    "cli"
+  ],
   "scripts": {
     "check": "node scripts/check-syntax.js"
   },
