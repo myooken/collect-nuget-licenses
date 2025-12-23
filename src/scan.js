@@ -4,29 +4,47 @@ import { decodeSmart } from "./encoding.js";
 
 const SKIP_DIRS = new Set(["node_modules", ".git", ".vs"]);
 
-// 再帰でファイル探索（除外ディレクトリ対応）
-async function findFiles(root, matcher) {
+// Concurrent, dependency-free directory walk with a simple queue to avoid deep recursion.
+async function findFiles(root, matcher, { concurrency = 8 } = {}) {
   const hits = [];
-  async function walk(dir) {
-    let entries;
-    try {
-      entries = await fsp.readdir(dir, { withFileTypes: true });
-    } catch {
-      return;
-    }
-    for (const entry of entries) {
-      const name = entry.name;
-      const full = path.join(dir, name);
-      if (entry.isDirectory()) {
-        if (SKIP_DIRS.has(name)) continue;
-        await walk(full);
-      } else if (matcher(name)) {
-        hits.push(full);
+  const queue = [root];
+  let active = 0;
+
+  return new Promise((resolve) => {
+    const processDir = async (dir) => {
+      let entries;
+      try {
+        entries = await fsp.readdir(dir, { withFileTypes: true });
+      } catch {
+        return;
       }
-    }
-  }
-  await walk(root);
-  return hits;
+      for (const entry of entries) {
+        const name = entry.name;
+        const full = path.join(dir, name);
+        if (entry.isDirectory()) {
+          if (SKIP_DIRS.has(name)) continue;
+          queue.push(full);
+        } else if (matcher(name)) {
+          hits.push(full);
+        }
+      }
+    };
+
+    const runNext = () => {
+      while (active < concurrency && queue.length > 0) {
+        const dir = queue.pop();
+        active += 1;
+        processDir(dir).finally(() => {
+          active -= 1;
+          if (queue.length === 0 && active === 0) resolve(hits);
+          else runNext();
+        });
+      }
+      if (queue.length === 0 && active === 0) resolve(hits);
+    };
+
+    runNext();
+  });
 }
 
 function parseLibraryKey(key) {
@@ -58,12 +76,20 @@ async function parsePackagesConfig(filePath) {
   try {
     const raw = await fsp.readFile(filePath);
     const xml = decodeSmart(raw);
-    const matches = [...xml.matchAll(/<package\s+[^>]*>/gi)];
+    const matches = [...xml.matchAll(/<package\b[^>]*?>/gims)];
     const items = [];
     for (const m of matches) {
       const tag = m[0];
-      const id = (tag.match(/\bid\s*=\s*"(.*?)"/i) || [])[1];
-      const version = (tag.match(/\bversion\s*=\s*"(.*?)"/i) || [])[1];
+      const attrs = {};
+      const attrRe = /([\w:.-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
+      let a;
+      while ((a = attrRe.exec(tag))) {
+        const key = a[1].toLowerCase();
+        const val = a[2] ?? a[3] ?? "";
+        attrs[key] = val;
+      }
+      const id = attrs.id;
+      const version = attrs.version;
       if (id && version) items.push({ id, version, from: filePath });
     }
     return items;
@@ -109,7 +135,7 @@ export function dedupePackages(list) {
 
 const LICENSE_PATTERN = /^(license|licence|notice|copying)(\.[a-z0-9]+)?$/i;
 
-// パッケージフォルダ直下の LICENSE 類を列挙
+// パッケージルート直下の LICENSE 類似ファイルを収集
 export async function getLicenseLikeFilesInFolderRoot(dir) {
   let entries;
   try {
