@@ -1,0 +1,22 @@
+{
+  "name": "@myooken/collect-nuget-licenses",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "nuget-notices": "./bin/nuget-notices.js"
+  },
+  "scripts": {
+    "check": "node scripts/check-syntax.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {},
+  "engines": {
+    "node": ">=18"
+  }
+}
