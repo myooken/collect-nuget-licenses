@@ -84,7 +84,7 @@ await run([
 ]);
 ```
 
-The function mirrors the CLI flags and is exported from the package root as the public entrypoint.
+The function mirrors the CLI flags and is exported from the package root as the public entrypoint. Deep imports are not part of the supported API when using the package `exports` map.
 Outputs are sorted by package key. Use `--update` to merge with existing files and keep packages that are no longer present, with their status shown in both outputs.
 
 ### Output overview
