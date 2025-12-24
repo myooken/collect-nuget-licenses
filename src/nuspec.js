@@ -34,7 +34,7 @@ function getSelfClosingTagAttrs(xml, tag) {
 function parseAttrs(attrText) {
   const attrs = {};
   if (!attrText) return attrs;
-  const re = /([\\w.:-]+)\\s*=\\s*"(.*?)"/g;
+  const re = /([\w.:-]+)\s*=\s*"(.*?)"/g;
   let m;
   while ((m = re.exec(attrText))) {
     attrs[m[1]] = decodeEntities(m[2]);
