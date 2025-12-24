@@ -116,3 +116,4 @@ Outputs are sorted by package key. Use `--update` to merge with existing files a
 - Missing `license` or `repository` metadata in nuspec files is flagged in the review output; packages without license files are reported in both files.
 - `.nupkg` ZIP support: store (0) and deflate (8) only; other methods are skipped with a warning. Zip64 single-disk archives only; large archives that exceed JS safe integers are skipped with a warning.
 - Filenames honor the ZIP UTF-8 flag; non-UTF-8 names are decoded best-effort with latin1. `.nupkg` files are read fully into memory (very large packages may use more RAM). Run `dotnet restore` first to populate the global cache.
+- Set `NUGET_PACKAGES` to point to a custom global-packages location if your cache is not at the default `dotnet` location.
