@@ -28,7 +28,8 @@
     "cli"
   ],
   "scripts": {
-    "check": "node scripts/check-syntax.js"
+    "check": "node scripts/check-syntax.js",
+    "test": "node --test"
   },
   "files": [
     "bin",

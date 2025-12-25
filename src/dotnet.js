@@ -1,7 +1,9 @@
 import { execFileSync } from "node:child_process";
+import path from "node:path";
 
 // NuGet の global-packages パスを dotnet CLI から取得
 export function getGlobalPackagesFolder() {
+  if (process.env.NUGET_PACKAGES) return path.resolve(process.env.NUGET_PACKAGES);
   let out = "";
   try {
     out = execFileSync("dotnet", ["nuget", "locals", "global-packages", "-l"], {
