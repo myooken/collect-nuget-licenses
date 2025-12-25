@@ -1,6 +1,6 @@
 {
   "name": "@myooken/collect-nuget-licenses",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Generate third-party-license markdown by scanning nuget.",
   "license": "MIT",
   "type": "module",
