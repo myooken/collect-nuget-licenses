@@ -1,12 +1,43 @@
-# Contributing
+# Contributing Guide
 
-This repository is published to npm, so keep contributor-facing notes here and end-user docs in `README.md`.
+## npm update
 
-## Development checks
-- Syntax check all JS files: `npm run check`  
-  (`scripts/check-syntax.js` runs `node --check` across `src/` and `bin/`).
-- Tests: `npm test` (uses `node --test`; set `NUGET_PACKAGES` to a temp cache path when running the fixtures).
+- npm login
 
-## Notes
-- Do not move end-user usage docs out of `README.md`.
-- Keep credentials and tokens out of the repo (see AGENTS.md for security notes if present). 
+```sh
+npm login
+```
+
+- check account
+
+```sh
+npm whoami
+```
+
+- check before upload package
+
+```sh
+npm pack --dry-run
+```
+
+- version update
+
+```sh
+npm version patch
+npm version minor
+npm version major
+```
+
+> - patch: 0.1.0 → 0.1.1
+> - minor: 0.1.0 → 0.2.0
+> - major: 0.1.0 → 1.0.0
+
+- publish
+
+```sh
+npm publish --access public
+```
+
+## Error handling
+
+If a required file is missing, the command prints an error message and exits with code 1.
